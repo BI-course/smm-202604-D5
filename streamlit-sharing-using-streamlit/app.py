@@ -64,7 +64,7 @@ with tab_regression:
         # OrdinalEncoder was fitted on.
         owner_education_level = st.selectbox(
             "Owner Education Level",
-            ["Primary", "Secondary", "Certificate", "Bachelor", "Master","Doctorate"], index=1)
+            ["Primary", "Secondary", "Certificate", "Bachelor", "Master", "Doctorate"], index=1)
         monthly_marketing_spend_kes = st.number_input("Monthly Marketing Spend (KES)", value=45000)
         avg_daily_foot_traffic = st.number_input(
             "Avg Daily Foot Traffic (leave 0 if not applicable)", value=0)
@@ -77,10 +77,21 @@ with tab_regression:
         submitted = st.form_submit_button("Predict Revenue")
 
     if submitted:
+        # Map the new UI categories to the old categories the model was trained on
+        education_map = {
+            "Primary": "Primary",
+            "Secondary": "Secondary",
+            "Certificate": "Tertiary",
+            "Bachelor": "Tertiary",
+            "Master": "Postgraduate",
+            "Doctorate": "Postgraduate"
+        }
+        model_ready_education = education_map[owner_education_level]
+
         payload = {
             "sector": sector, "county": county, "quarter": quarter,
             "business_age_years": business_age_years, "num_employees": num_employees,
-            "owner_education_level": owner_education_level,
+            "owner_education_level": model_ready_education,
             "monthly_marketing_spend_kes": monthly_marketing_spend_kes,
             "avg_daily_foot_traffic": avg_daily_foot_traffic or None,
             "online_presence_score": online_presence_score,
@@ -105,7 +116,7 @@ with tab_classification:
         loan_purpose = st.text_input("Loan Purpose", "Working Capital")
         owner_education_level2 = st.selectbox(
             "Owner Education Level",
-            ["Primary", "Secondary", "Certificate", "Bachelor", "Master","Doctorate"], index=1, key="oel2")
+            ["Primary", "Secondary", "Certificate", "Bachelor", "Master", "Doctorate"], index=1, key="oel2")
         business_age_years2 = st.number_input("Business Age (years)", value=2.1, key="bay2")
         num_employees2 = st.number_input("Number of Employees", value=4, key="ne2")
         monthly_revenue_kes = st.number_input("Monthly Revenue (KES)", value=850000)
@@ -124,9 +135,20 @@ with tab_classification:
         submitted2 = st.form_submit_button("Predict Credit Risk")
 
     if submitted2:
+        # Map the new UI categories to the old categories the model was trained on
+        education_map = {
+            "Primary": "Primary",
+            "Secondary": "Secondary",
+            "Certificate": "Tertiary",
+            "Bachelor": "Tertiary",
+            "Master": "Postgraduate",
+            "Doctorate": "Postgraduate"
+        }
+        model_ready_education2 = education_map[owner_education_level2]
+
         payload = {
             "sector": sector2, "county": county2, "quarter": quarter2,
-            "loan_purpose": loan_purpose, "owner_education_level": owner_education_level2,
+            "loan_purpose": loan_purpose, "owner_education_level": model_ready_education2,
             "business_age_years": business_age_years2, "num_employees": num_employees2,
             "monthly_revenue_kes": monthly_revenue_kes, "loan_amount_kes": loan_amount_kes2,
             "loan_term_months": loan_term_months, "interest_rate_pct": interest_rate_pct2,
